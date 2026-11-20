@@ -1,6 +1,9 @@
 quarkus:
   application:
     name: employee-management
+  http:
+    auth:
+      proactive: true
   datasource:
     db-kind: mysql
     username: ${DB_USERNAME}
@@ -37,3 +40,9 @@ quarkus:
     hibernate-orm:
       schema-management:
         strategy: drop-and-create
+  app:
+    admin:
+      username: test-admin
+      password: test-password
+  jwt:
+    signing-secret: test-signing-secret-at-least-32-characters

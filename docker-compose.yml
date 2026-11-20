@@ -28,6 +28,9 @@ services:
       DB_JDBC_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-employees}?allowPublicKeyRetrieval=true&useSSL=false
       DB_USERNAME: ${MYSQL_USER:-employees}
       DB_PASSWORD: ${MYSQL_PASSWORD:-employees}
+      APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME:-admin}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-change-me}
+      JWT_SIGNING_SECRET: ${JWT_SIGNING_SECRET:-replace-with-at-least-32-random-characters}
     ports:
       - "${API_PORT:-8080}:8080"
 
