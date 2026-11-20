@@ -3,6 +3,8 @@ package com.company.employees.presentation.resource;
 import com.company.employees.infrastructure.repository.EmployeeRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,42 @@ class EmployeeResourceTest {
     @Transactional
     void cleanDatabase() {
         repository.deleteAll();
+        String token = given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {"username":"test-admin","password":"test-password"}
+                        """)
+                .when().post("/auth/login")
+                .then()
+                .statusCode(200)
+                .extract().path("token");
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+    }
+
+    @Test
+    void rejectsRequestWithInvalidBearerToken() {
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .addHeader("Authorization", "Bearer invalid-token")
+                .build();
+
+        given()
+                .when().get("/employees")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    void rejectsInvalidLoginCredentials() {
+        given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {"username":"test-admin","password":"wrong"}
+                        """)
+                .when().post("/auth/login")
+                .then()
+                .statusCode(401);
     }
 
     @Test
