@@ -2,7 +2,31 @@ openapi: 3.0.3
 info:
   title: Employee Management API
   version: 1.0.0
+security:
+  - bearerAuth: []
 paths:
+  /auth/login:
+    post:
+      summary: Obtain an administrator JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: JWT issued
+        "401":
+          description: Invalid credentials
   /employees:
     get:
       summary: List employees
@@ -120,6 +144,11 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     CreateEmployee:
       type: object

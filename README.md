@@ -56,6 +56,17 @@ The default runtime profile uses MySQL. Configure the following environment vari
 | `DB_JDBC_URL` | MySQL JDBC URL, for example `jdbc:mysql://localhost:3306/employees` |
 | `DB_USERNAME` | MySQL username |
 | `DB_PASSWORD` | MySQL password |
+| `APP_ADMIN_USERNAME` | Internal administrator username |
+| `APP_ADMIN_PASSWORD` | Internal administrator password |
+| `JWT_SIGNING_SECRET` | HMAC signing secret with at least 32 characters |
+
+The employee API requires a JWT bearer token. Obtain one by calling `POST /auth/login`:
+
+```json
+{"username":"admin","password":"your-password"}
+```
+
+Then send `Authorization: Bearer <token>` with every `/employees` request. Tokens expire after one hour.
 
 Development uses Hibernate schema updates. The production/default profile validates the schema rather than modifying it. Tests use an in-memory H2 database.
 
@@ -76,6 +87,7 @@ Base URL: `http://localhost:8080`
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
+| POST | `/auth/login` | Obtain an administrator JWT |
 | GET | `/employees` | List all employees |
 | GET | `/employees/{id}` | Get one employee |
 | POST | `/employees` | Create one or more employees |
