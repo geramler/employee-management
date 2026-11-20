@@ -10,6 +10,9 @@ quarkus:
   hibernate-orm:
     schema-management:
       strategy: validate
+  flyway:
+    migrate-at-start: true
+    baseline-at-start: true
   log:
     category:
       "com.company.employees":
@@ -29,6 +32,8 @@ quarkus:
       password: ""
       jdbc:
         url: jdbc:h2:mem:employees;DB_CLOSE_DELAY=-1
+    flyway:
+      migrate-at-start: false
     hibernate-orm:
       schema-management:
         strategy: drop-and-create

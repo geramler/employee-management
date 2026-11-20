@@ -91,6 +91,17 @@ Swagger UI is available at `/q/swagger-ui`. OpenAPI JSON is at `/q/openapi`, hea
 
 ## Docker
 
+The complete application stack, including MySQL, can be started with Docker Compose:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+The API is available at `http://localhost:8080`. The example credentials are for local development only; replace every password in `.env` outside that environment. Flyway automatically creates the `employees` table on the first API startup.
+
+For a standalone container without Compose, build and run the API against an existing MySQL instance:
+
 ```bash
 docker build -t employee-management .
 docker run --rm -p 8080:8080 \
