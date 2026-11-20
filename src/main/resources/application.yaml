@@ -1,0 +1,34 @@
+quarkus:
+  application:
+    name: employee-management
+  datasource:
+    db-kind: mysql
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    jdbc:
+      url: ${DB_JDBC_URL}
+  hibernate-orm:
+    schema-management:
+      strategy: validate
+  log:
+    category:
+      "com.company.employees":
+        level: INFO
+
+"%dev":
+  quarkus:
+    hibernate-orm:
+      schema-management:
+        strategy: update
+
+"%test":
+  quarkus:
+    datasource:
+      db-kind: h2
+      username: sa
+      password: ""
+      jdbc:
+        url: jdbc:h2:mem:employees;DB_CLOSE_DELAY=-1
+    hibernate-orm:
+      schema-management:
+        strategy: drop-and-create
