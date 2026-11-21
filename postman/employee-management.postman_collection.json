@@ -1,15 +1,87 @@
 {
   "info": {
+    "_postman_id": "b9c8e5a1-20d1-4e7c-8a4f-3f6a8c92d101",
     "name": "Employee Management",
+    "description": "Requests for the Employee Management REST API.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080"
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "change-me",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeId",
+      "value": "1",
+      "type": "string"
     }
   ],
   "item": [
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const body = pm.response.json();",
+              "    pm.collectionVariables.set(\"accessToken\", body.token);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
     {
       "name": "List employees",
       "request": {
@@ -21,7 +93,7 @@
       "name": "Get employee",
       "request": {
         "method": "GET",
-        "url": "{{baseUrl}}/employees/1"
+        "url": "{{baseUrl}}/employees/{{employeeId}}"
       }
     },
     {
@@ -36,7 +108,58 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "[{\n  \"firstName\": \"Ana\",\n  \"secondName\": \"Maria\",\n  \"paternalSurname\": \"Garcia\",\n  \"maternalSurname\": \"Lopez\",\n  \"age\": 30,\n  \"sex\": \"FEMALE\",\n  \"birthDate\": \"19-11-1995\",\n  \"position\": \"Developer\",\n  \"active\": true\n}]"
+          "raw": "{\n  \"firstName\": \"Ana\",\n  \"secondName\": \"Maria\",\n  \"paternalSurname\": \"Garcia\",\n  \"maternalSurname\": \"Lopez\",\n  \"age\": 31,\n  \"sex\": \"FEMALE\",\n  \"birthDate\": \"19-11-1995\",\n  \"position\": \"Developer\",\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/employees"
+      }
+    },
+    {
+      "name": "Create multiple employees",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"returns 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"returns two created employees as JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "    const employees = pm.response.json();",
+              "    pm.expect(employees).to.be.an(\"array\").with.lengthOf(2);",
+              "    pm.expect(employees.map((employee) => employee.firstName)).to.include.members([\"Marco\", \"Lucia\"]);",
+              "    employees.forEach((employee) => {",
+              "        pm.expect(employee).to.have.property(\"id\");",
+              "        pm.expect(employee).to.have.property(\"createdAt\");",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"firstName\": \"Marco\",\n    \"secondName\": \"Antonio\",\n    \"paternalSurname\": \"Vega\",\n    \"maternalSurname\": \"Serrano\",\n    \"age\": 36,\n    \"sex\": \"MALE\",\n    \"birthDate\": \"12-01-1990\",\n    \"position\": \"QA Engineer\",\n    \"active\": true\n  },\n  {\n    \"firstName\": \"Lucia\",\n    \"secondName\": \"Beatriz\",\n    \"paternalSurname\": \"Ortega\",\n    \"maternalSurname\": \"Silva\",\n    \"age\": 27,\n    \"sex\": \"FEMALE\",\n    \"birthDate\": \"01-07-1999\",\n    \"position\": \"Product Analyst\",\n    \"active\": true\n  }\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
         "url": "{{baseUrl}}/employees"
       }
@@ -53,9 +176,14 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"position\": \"Lead Developer\",\n  \"active\": false\n}"
+          "raw": "{\n  \"position\": \"Lead Developer\",\n  \"active\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
-        "url": "{{baseUrl}}/employees/1"
+        "url": "{{baseUrl}}/employees/{{employeeId}}"
       }
     },
     {
@@ -69,7 +197,7 @@
       "name": "Delete employee",
       "request": {
         "method": "DELETE",
-        "url": "{{baseUrl}}/employees/1"
+        "url": "{{baseUrl}}/employees/{{employeeId}}"
       }
     }
   ]

@@ -110,7 +110,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-The API is available at `http://localhost:8080`. The example credentials are for local development only; replace every password in `.env` outside that environment. Flyway automatically creates the `employees` table on the first API startup.
+The API is available at `http://localhost:8080`. The example credentials are for local development only; replace every password in `.env` outside that environment. Flyway automatically creates the `employees` table on the first API startup. On every production startup, the API resets the employee table to five sample employees with IDs 1–5. This deletes any employee records created since the previous startup; use this behavior only for local testing, not with real employee data.
 
 For a standalone container without Compose, build and run the API against an existing MySQL instance:
 
