@@ -15,7 +15,6 @@ quarkus:
       strategy: validate
   flyway:
     migrate-at-start: true
-    baseline-at-start: true
   log:
     category:
       "com.company.employees":
